@@ -25,3 +25,30 @@ export async function generateBookMetadata(title: string, author: string) {
         };
     }
 }
+
+export async function generateVoiceAudio(text: string) {
+    try {
+        const encodedText = encodeURIComponent(text.slice(0, 200));
+        const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=en&client=tw-ob`;
+
+        const response = await fetch(ttsUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch TTS: ${response.statusText}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64Audio = buffer.toString('base64');
+
+        return {
+            success: true,
+            audioData: `data:audio/mpeg;base64,${base64Audio}`,
+        };
+    } catch (error) {
+        console.error("Voice Generation Error:", error);
+        return {
+            success: false,
+            error: "Failed to generate voice audio.",
+        };
+    }
+}
