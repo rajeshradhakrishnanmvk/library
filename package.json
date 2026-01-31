@@ -9,7 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@genkit-ai/googleai": "^1.28.0",
     "firebase": "^12.8.0",
+    "genkit": "^1.28.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3"

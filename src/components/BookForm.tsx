@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { BookFormData } from '@/types/book';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { storage } from '@/lib/firebase';
+import { generateBookMetadata } from '@/app/actions/book-ai';
+
+
 
 interface BookFormProps {
   initialData?: BookFormData;
@@ -31,6 +34,9 @@ export default function BookForm({
   );
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEnhancing, setIsEnhancing] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -63,6 +69,64 @@ export default function BookForm({
       setIsSubmitting(false);
     }
   };
+
+  const handleEnhance = async () => {
+    if (!formData.title || !formData.author) {
+      alert("Please enter Title and Author to enhance the profile.");
+      return;
+    }
+
+    setIsEnhancing(true);
+    try {
+      const result = await generateBookMetadata(formData.title, formData.author);
+      if (result.success && result.description) {
+        setFormData(prev => ({
+          ...prev,
+          description: result.description || prev.description,
+          coverImageUrl: result.coverPrompt
+            ? `https://image.pollinations.ai/prompt/${encodeURIComponent(result.coverPrompt)}?nologo=true`
+            : prev.coverImageUrl
+        }));
+        // Reset file input if we generated a new image
+        if (result.coverPrompt) {
+          setCoverImageFile(null);
+          // Also explicitly clear the file input element if possible, but state null is main tracker
+          const fileInput = document.getElementById('coverImage') as HTMLInputElement;
+          if (fileInput) fileInput.value = '';
+        }
+      } else {
+        console.error("Enhancement failed:", result.error);
+        alert("Failed to enhance book profile. " + (result.error || ""));
+      }
+    } catch (err) {
+      console.error("Enhance error", err);
+      alert("An error occurred during enhancement.");
+    } finally {
+      setIsEnhancing(false);
+    }
+  };
+
+  const handleVoiceOver = () => {
+    if (!formData.description) return;
+
+    if ('speechSynthesis' in window) {
+      if (isSpeaking) {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+        return;
+      }
+
+      const utterance = new SpeechSynthesisUtterance(formData.description);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      setIsSpeaking(true);
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert("Text-to-speech is not supported in this browser.");
+    }
+  };
+
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -150,13 +214,40 @@ export default function BookForm({
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         {formData.coverImageUrl && !coverImageFile && (
-          <p className="text-xs text-gray-500 mt-1">Current image: <a href={formData.coverImageUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">View</a></p>
+          <div className="mt-2">
+            <p className="text-xs text-gray-500 mb-1">Current Cover:</p>
+            <img
+              src={formData.coverImageUrl}
+              alt="Book Cover"
+              className="w-32 h-48 object-cover rounded shadow-md border"
+            />
+          </div>
         )}
       </div>
 
+      <div className="flex justify-end">
+        <button
+          type="button"
+          onClick={handleEnhance}
+          disabled={isEnhancing || !formData.title || !formData.author}
+          className="text-sm px-3 py-1 bg-purple-100 text-purple-700 rounded hover:bg-purple-200 disabled:opacity-50 flex items-center gap-2"
+        >
+          {isEnhancing ? '✨ Enhancing w/ Genkit...' : '✨ Enhance Profile with AI'}
+        </button>
+      </div>
+
       <div>
-        <label htmlFor="description" className="block text-sm font-medium mb-1">
-          Description
+        <label htmlFor="description" className="block text-sm font-medium mb-1 flex justify-between items-center">
+          <span>Description</span>
+          {formData.description && (
+            <button
+              type="button"
+              onClick={handleVoiceOver}
+              className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            >
+              {isSpeaking ? '⏹ Stop Voice Over' : '🔊 Play Voice Over'}
+            </button>
+          )}
         </label>
         <textarea
           id="description"
