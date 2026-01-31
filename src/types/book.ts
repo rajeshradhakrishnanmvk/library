@@ -9,6 +9,8 @@ export interface Book {
     genre?: string;
     description?: string;
     coverImageUrl?: string;
+    aiCoverImageUrl?: string;
+    voiceUrl?: string;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }
@@ -21,4 +23,6 @@ export interface BookFormData {
     genre?: string;
     description?: string;
     coverImageUrl?: string;
+    aiCoverImageUrl?: string;
+    voiceUrl?: string;
 }
