@@ -2,6 +2,15 @@
 
 A Next.js application for managing your book collection using Firebase Firestore.
 
+## 📋 Code Review & Improvement Prompts Available
+
+**📖 For developers and architects**: This repository includes a comprehensive Firebase architecture code review with 33+ actionable improvement prompts. See:
+- [`CODE_REVIEW_README.md`](CODE_REVIEW_README.md) - Quick start guide
+- [`IMPROVEMENT_PROMPTS_SUMMARY.md`](IMPROVEMENT_PROMPTS_SUMMARY.md) - Ready-to-use prompts for AI agents
+- [`FIREBASE_ARCHITECTURE_REVIEW.md`](FIREBASE_ARCHITECTURE_REVIEW.md) - Full detailed review
+
+These documents provide step-by-step prompts for improving security, performance, testing, and features.
+
 ## Features
 
 - ✨ Add, view, edit, and delete books
@@ -10,6 +19,9 @@ A Next.js application for managing your book collection using Firebase Firestore
 - 🎨 Clean and modern UI
 - 🚀 Built with Next.js 14 App Router
 - 📝 TypeScript for type safety
+- 🤖 AI-powered book enhancements with Google Gemini
+- 🎙️ Voice generation for book descriptions
+- 🔐 Google Authentication integration
 
 ## Book Schema
 
