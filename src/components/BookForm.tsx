@@ -21,17 +21,17 @@ export default function BookForm({
   onCancel,
   submitLabel = 'Submit'
 }: BookFormProps) {
-  const [formData, setFormData] = useState<BookFormData>(
-    initialData || {
-      title: '',
-      author: '',
-      isbn: '',
-      year: '',
-      genre: '',
-      description: '',
-      coverImageUrl: '',
-    }
-  );
+  const [formData, setFormData] = useState<BookFormData>({
+    title: initialData?.title || '',
+    author: initialData?.author || '',
+    isbn: initialData?.isbn || '',
+    year: initialData?.year || '',
+    genre: initialData?.genre || '',
+    description: initialData?.description || '',
+    coverImageUrl: initialData?.coverImageUrl || '',
+    aiCoverImageUrl: initialData?.aiCoverImageUrl || '',
+    voiceUrl: initialData?.voiceUrl || '',
+  });
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
