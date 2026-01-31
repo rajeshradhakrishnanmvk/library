@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 import { Book, BookFormData } from '@/types/book';
 import { getBookById, updateBook } from '@/lib/bookService';
 import BookForm from '@/components/BookForm';
@@ -11,13 +12,18 @@ export default function EditBookPage() {
     const router = useRouter();
     const params = useParams();
     const bookId = params.id as string;
+    const { user, loading: authLoading } = useAuth();
 
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/');
+            return;
+        }
         loadBook();
-    }, [bookId]);
+    }, [bookId, user, authLoading, router]);
 
     const loadBook = async () => {
         try {
@@ -43,7 +49,7 @@ export default function EditBookPage() {
         }
     };
 
-    if (loading) {
+    if (loading || authLoading) {
         return (
             <main className="min-h-screen bg-gray-50">
                 <div className="max-w-2xl mx-auto px-4 py-8">

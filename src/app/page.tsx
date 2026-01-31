@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Book } from '@/types/book';
 import { getAllBooks, deleteBook } from '@/lib/bookService';
+import { useAuth } from '@/context/AuthContext';
 import BookList from '@/components/BookList';
+import FirebaseHealth from '@/components/AppHealth';
 
 export default function Home() {
+  const { user } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,12 +47,14 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900">My Book Collection</h1>
-          <Link
-            href="/books/new"
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Add New Book
-          </Link>
+          {user && (
+            <Link
+              href="/books/new"
+              className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add New Book
+            </Link>
+          )}
         </div>
 
         {loading && (
@@ -66,6 +71,9 @@ export default function Home() {
         )}
 
         {!loading && !error && <BookList books={books} onDelete={handleDelete} />}
+      </div>
+      <div>
+        <FirebaseHealth />
       </div>
     </main>
   );

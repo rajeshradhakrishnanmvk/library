@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 import { Book } from '@/types/book';
 import { getBookById, deleteBook } from '@/lib/bookService';
 
@@ -10,6 +11,7 @@ export default function BookDetailPage() {
     const router = useRouter();
     const params = useParams();
     const bookId = params.id as string;
+    const { user } = useAuth();
 
     const [book, setBook] = useState<Book | null>(null);
     const [loading, setLoading] = useState(true);
@@ -113,15 +115,26 @@ export default function BookDetailPage() {
                     )}
 
                     <div className="border-t pt-6 flex gap-3">
-                        <Link
-                            href={`/books/${book.id}/edit`}
-                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-                        >
-                            Edit Book
-                        </Link>
+                        {user ? (
+                            <Link
+                                href={`/books/${book.id}/edit`}
+                                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                            >
+                                Edit Book
+                            </Link>
+                        ) : (
+                            <button
+                                disabled
+                                className="px-4 py-2 bg-green-600 text-white rounded opacity-50 cursor-not-allowed"
+                            >
+                                Edit Book
+                            </button>
+                        )}
                         <button
                             onClick={handleDelete}
-                            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                            disabled={!user}
+                            className={`px-4 py-2 bg-red-600 text-white rounded ${user ? 'hover:bg-red-700' : 'opacity-50 cursor-not-allowed'
+                                }`}
                         >
                             Delete Book
                         </button>

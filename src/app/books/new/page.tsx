@@ -1,6 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { BookFormData } from '@/types/book';
 import { createBook } from '@/lib/bookService';
 import BookForm from '@/components/BookForm';
@@ -8,6 +10,21 @@ import Link from 'next/link';
 
 export default function NewBookPage() {
     const router = useRouter();
+    const { user, loading } = useAuth();
+
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push('/');
+        }
+    }, [user, loading, router]);
+
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-gray-600">Loading...</div>
+            </main>
+        );
+    }
 
     const handleSubmit = async (data: BookFormData) => {
         try {

@@ -2,6 +2,7 @@
 
 import { Book } from '@/types/book';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 interface BookListProps {
     books: Book[];
@@ -9,6 +10,7 @@ interface BookListProps {
 }
 
 export default function BookList({ books, onDelete }: BookListProps) {
+    const { user } = useAuth();
     const handleDelete = async (id: string, title: string) => {
         if (confirm(`Are you sure you want to delete "${title}"?`)) {
             await onDelete(id);
@@ -60,15 +62,26 @@ export default function BookList({ books, onDelete }: BookListProps) {
                         >
                             View
                         </Link>
-                        <Link
-                            href={`/books/${book.id}/edit`}
-                            className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
-                        >
-                            Edit
-                        </Link>
+                        {user ? (
+                            <Link
+                                href={`/books/${book.id}/edit`}
+                                className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700"
+                            >
+                                Edit
+                            </Link>
+                        ) : (
+                            <button
+                                disabled
+                                className="px-3 py-1 bg-green-600 text-white text-sm rounded opacity-50 cursor-not-allowed"
+                            >
+                                Edit
+                            </button>
+                        )}
                         <button
                             onClick={() => handleDelete(book.id!, book.title)}
-                            className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                            disabled={!user}
+                            className={`px-3 py-1 bg-red-600 text-white text-sm rounded ${user ? 'hover:bg-red-700' : 'opacity-50 cursor-not-allowed'
+                                }`}
                         >
                             Delete
                         </button>

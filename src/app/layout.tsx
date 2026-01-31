@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthContextProvider } from '../context/AuthContext';
+import Navbar from '../components/Navbar';
 
 export const metadata: Metadata = {
   title: 'Book Collection App',
@@ -13,7 +15,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthContextProvider>
+          <Navbar />
+          <main className="min-h-screen bg-slate-50">
+            {children}
+          </main>
+        </AuthContextProvider>
+      </body>
     </html>
   );
 }
