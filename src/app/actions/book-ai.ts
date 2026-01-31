@@ -52,3 +52,29 @@ export async function generateVoiceAudio(text: string) {
         };
     }
 }
+
+export async function fetchImageAsBase64(url: string) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const base64 = buffer.toString('base64');
+        const contentType = response.headers.get('content-type') || 'image/png';
+
+        return {
+            success: true,
+            base64: `data:${contentType};base64,${base64}`,
+            contentType
+        };
+    } catch (error) {
+        console.error("Fetch Image Error:", error);
+        return {
+            success: false,
+            error: "Failed to fetch image from URL.",
+        };
+    }
+}

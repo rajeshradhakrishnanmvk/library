@@ -10,7 +10,8 @@ import {
     query,
     orderBy,
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { ref, deleteObject } from 'firebase/storage';
+import { db, storage } from './firebase';
 import { Book, BookFormData } from '@/types/book';
 
 const BOOKS_COLLECTION = 'books';
@@ -59,8 +60,30 @@ export async function updateBook(id: string, bookData: Partial<BookFormData>): P
     });
 }
 
-// Delete a book
+// Delete a book and its associated files
 export async function deleteBook(id: string): Promise<void> {
+    const book = await getBookById(id);
+    if (book) {
+        // Helper to delete a file from storage given its URL
+        const deleteFile = async (url?: string) => {
+            if (!url) return;
+            try {
+                // Create a reference from the HTTPS URL
+                const fileRef = ref(storage, url);
+                await deleteObject(fileRef);
+            } catch (error) {
+                console.warn(`Failed to delete file at ${url}:`, error);
+                // Continue deletion of other assets/doc even if one fails
+            }
+        };
+
+        await Promise.all([
+            deleteFile(book.coverImageUrl),
+            deleteFile(book.aiCoverImageUrl),
+            deleteFile(book.voiceUrl)
+        ]);
+    }
+
     const docRef = doc(db, BOOKS_COLLECTION, id);
     await deleteDoc(docRef);
 }

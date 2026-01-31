@@ -81,6 +81,9 @@ export default function EditBookPage() {
         year: book.year || '',
         genre: book.genre || '',
         description: book.description || '',
+        coverImageUrl: book.coverImageUrl || '',
+        aiCoverImageUrl: book.aiCoverImageUrl || '',
+        voiceUrl: book.voiceUrl || '',
     };
 
     return (

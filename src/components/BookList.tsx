@@ -32,15 +32,40 @@ export default function BookList({ books, onDelete }: BookListProps) {
                     key={book.id}
                     className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow bg-white overflow-hidden flex flex-col"
                 >
-                    {book.coverImageUrl && (
-                        <div className="w-full h-48 mb-4 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
-                            <img
-                                src={book.coverImageUrl}
-                                alt={`Cover of ${book.title}`}
-                                className="w-full h-full object-cover"
-                            />
+                    <div className="flex gap-2 mb-4 h-48">
+                        <div className="flex-1 relative overflow-hidden rounded-md bg-gray-100 flex items-center justify-center border border-gray-200 group">
+                            {book.coverImageUrl ? (
+                                <img
+                                    src={book.coverImageUrl}
+                                    alt={`User cover of ${book.title}`}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-gray-400 text-[10px] text-center px-1">No User Image</span>
+                            )}
+                            <div className="absolute top-0 left-0 bg-gray-800/60 text-white text-[8px] px-1 py-0.5 rounded-br uppercase tracking-tighter font-bold">User</div>
                         </div>
-                    )}
+
+                        <div className="flex-1 relative overflow-hidden rounded-md bg-purple-50 flex items-center justify-center border border-purple-200 group">
+                            {book.aiCoverImageUrl ? (
+                                <img
+                                    src={book.aiCoverImageUrl}
+                                    alt={`AI Persona of ${book.title}`}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <span className="text-purple-300 text-[10px] text-center px-1">No AI Persona</span>
+                            )}
+                            <div className="absolute top-0 left-0 bg-purple-600/80 text-white text-[8px] px-1 py-0.5 rounded-br uppercase tracking-tighter font-bold">AI Persona</div>
+                            {book.voiceUrl && (
+                                <div className="absolute bottom-1 right-1 bg-green-500 rounded-full p-1 shadow-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                     <h3 className="text-xl font-semibold mb-2">{book.title}</h3>
                     <p className="text-gray-600 mb-2">by {book.author}</p>
 
