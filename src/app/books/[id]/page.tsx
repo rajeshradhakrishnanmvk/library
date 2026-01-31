@@ -84,6 +84,16 @@ export default function BookDetailPage() {
                     <h1 className="text-4xl font-bold text-gray-900 mb-4">{book.title}</h1>
                     <p className="text-xl text-gray-600 mb-6">by {book.author}</p>
 
+                    {book.coverImageUrl && (
+                        <div className="mb-6 max-w-sm rounded-lg overflow-hidden shadow-sm">
+                            <img
+                                src={book.coverImageUrl}
+                                alt={`Cover of ${book.title}`}
+                                className="w-full h-auto object-cover"
+                            />
+                        </div>
+                    )}
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         {book.genre && (
                             <div>

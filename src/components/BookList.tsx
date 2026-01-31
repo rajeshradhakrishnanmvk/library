@@ -30,8 +30,17 @@ export default function BookList({ books, onDelete }: BookListProps) {
             {books.map((book) => (
                 <div
                     key={book.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow"
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow bg-white overflow-hidden flex flex-col"
                 >
+                    {book.coverImageUrl && (
+                        <div className="w-full h-48 mb-4 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
+                            <img
+                                src={book.coverImageUrl}
+                                alt={`Cover of ${book.title}`}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    )}
                     <h3 className="text-xl font-semibold mb-2">{book.title}</h3>
                     <p className="text-gray-600 mb-2">by {book.author}</p>
 
